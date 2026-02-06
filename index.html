@@ -9,6 +9,9 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         body {
@@ -19,6 +22,13 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
+        }
+
+        .screenshot-wrapper {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffc1e3 100%);
+            padding: 40px;
+            border-radius: 0;
         }
 
         .container {
@@ -28,6 +38,15 @@
             border-radius: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 30px;
+                max-height: 95vh;
+            }
         }
 
         h1 {
@@ -57,6 +76,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            touch-action: manipulation;
         }
 
         button:hover {
@@ -110,6 +130,224 @@
             animation: fadeIn 0.5s;
         }
 
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .slider-container {
+            margin-top: 30px;
+            width: 100%;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            max-width: 400px;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #ffc1e3 0%, #ff1744 100%);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ff1744;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(255, 23, 68, 0.5);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ff1744;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(255, 23, 68, 0.5);
+            border: none;
+        }
+
+        .love-amount {
+            font-size: 2.5em;
+            color: #ff1744;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-love {
+            padding: 15px 40px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff1744 0%, #ff6b9d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-love:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .drawing-container {
+            margin-top: 30px;
+        }
+
+        #drawingCanvas {
+            border: 3px solid #ff1744;
+            border-radius: 15px;
+            cursor: crosshair;
+            touch-action: none;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .canvas-controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .canvas-btn {
+            padding: 10px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff1744 0%, #ff6b9d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .canvas-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .canvas-btn.secondary {
+            background: linear-gradient(135deg, #9e9e9e 0%, #bdbdbd 100%);
+        }
+
+        .results-container {
+            display: none;
+            animation: fadeIn 0.5s;
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+        }
+
+        .results-container h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .result-item {
+            background: #fff0f5;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border-left: 5px solid #ff1744;
+        }
+
+        .result-question {
+            font-weight: bold;
+            color: #ff1744;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .result-answer {
+            color: #333;
+            font-size: 1em;
+        }
+
+        .result-canvas {
+            border: 3px solid #ff1744;
+            border-radius: 10px;
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+
+        .grade-container {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #ff1744 0%, #ff6b9d 100%);
+            border-radius: 20px;
+            color: white;
+        }
+
+        .grade-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .grade-score {
+            font-size: 4em;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .grade-message {
+            font-size: 1.3em;
+            margin-top: 15px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 15px 35px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #ff1744 0%, #ff6b9d 100%);
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.8); }
             to { opacity: 1; transform: scale(1); }
@@ -125,45 +363,374 @@
 <body>
     <div class="hearts" id="hearts"></div>
     
-    <div class="container">
-        <h1>Will you be my Valentine???</h1>
-        <div class="buttons">
+    <div class="screenshot-wrapper" id="screenshotWrapper">
+        <div class="container">
+        <h1 id="questionText">Will you be my Valentine???</h1>
+        <div class="buttons" id="buttonsContainer">
             <button id="yesBtn">Yes! 💕</button>
             <button id="noBtn">No</button>
         </div>
+        
+        <div class="question-container" id="question2">
+            <h1>Do you love me???</h1>
+            <div class="buttons" id="buttonsContainer2">
+                <button id="yesBtn2">Yes! 💕</button>
+                <button id="noBtn2">No</button>
+            </div>
+        </div>
+        
+        <div class="question-container" id="question3">
+            <h1>How much do you love me???</h1>
+            <div class="slider-container">
+                <div class="slider-wrapper">
+                    <div class="love-amount" id="loveAmount">5000000000000</div>
+                    <input type="range" id="loveSlider" min="0" max="10000000000000" value="5000000000000" step="100000000">
+                    <button class="submit-love" id="submitLove">Submit 💖</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="question-container" id="question4">
+            <h1>If you love me then draw me:</h1>
+            <div class="drawing-container">
+                <canvas id="drawingCanvas" width="600" height="400"></canvas>
+                <div class="canvas-controls">
+                    <button class="canvas-btn secondary" id="clearCanvas">Clear</button>
+                    <button class="canvas-btn" id="submitDrawing">Done! 💕</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-container" id="resultsScreen">
+            <h1>Your Results 💕</h1>
+            
+            <div class="result-item">
+                <div class="result-question">Will you be my Valentine???</div>
+                <div class="result-answer" id="result1">Yes! 💕</div>
+            </div>
+            
+            <div class="result-item">
+                <div class="result-question">Do you love me???</div>
+                <div class="result-answer" id="result2">Yes! 💕</div>
+            </div>
+            
+            <div class="result-item">
+                <div class="result-question">How much do you love me???</div>
+                <div class="result-answer" id="result3">0</div>
+            </div>
+            
+            <div class="result-item">
+                <div class="result-question">If you love me then draw me:</div>
+                <img id="resultDrawing" class="result-canvas" src="" alt="Your drawing">
+            </div>
+            
+            <div class="grade-container">
+                <div class="grade-title">YOUR GRADE:</div>
+                <div class="grade-score" id="finalGrade">100%</div>
+                <div class="grade-message" id="gradeMessage">Perfect score! 💖</div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn download-btn" id="downloadBtn">Download Results 📥</button>
+            </div>
+        </div>
+        
         <div class="success-message" id="successMessage">
             ily :)
         </div>
+    </div>
     </div>
 
     <script>
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
+        const noBtn2 = document.getElementById('noBtn2');
+        const yesBtn2 = document.getElementById('yesBtn2');
         const successMessage = document.getElementById('successMessage');
         const heartsContainer = document.getElementById('hearts');
-        const buttonsContainer = document.querySelector('.buttons');
+        const buttonsContainer = document.getElementById('buttonsContainer');
+        const buttonsContainer2 = document.getElementById('buttonsContainer2');
+        const question2 = document.getElementById('question2');
+        const question3 = document.getElementById('question3');
+        const loveSlider = document.getElementById('loveSlider');
+        const loveAmount = document.getElementById('loveAmount');
+        const submitLove = document.getElementById('submitLove');
+        const question4 = document.getElementById('question4');
+        const drawingCanvas = document.getElementById('drawingCanvas');
+        const clearCanvas = document.getElementById('clearCanvas');
+        const submitDrawing = document.getElementById('submitDrawing');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const downloadBtn = document.getElementById('downloadBtn');
 
-        // Variables to track button scaling
+        // Track user responses
+        let userResponses = {
+            question1: 'Yes! 💕',
+            question2: 'Yes! 💕',
+            loveAmount: 5000000000000,
+            noClickCount: 0  // Track how many times they tried to click No
+        };
+
+        let finalGradeValue = 0;
+        let drawingDataURL = '';
+
+        // Load dom-to-image library dynamically
+        function loadDomToImage() {
+            return new Promise((resolve, reject) => {
+                if (window.domtoimage) {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        // Canvas setup
+        let ctx;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // Initialize canvas when question 4 is shown
+        function initCanvas() {
+            ctx = drawingCanvas.getContext('2d');
+            ctx.strokeStyle = '#ff1744';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+
+        // Get coordinates from mouse or touch event
+        function getCoordinates(e) {
+            const rect = drawingCanvas.getBoundingClientRect();
+            if (e.touches) {
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                };
+            }
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        // Start drawing
+        function startDrawing(e) {
+            isDrawing = true;
+            const coords = getCoordinates(e);
+            lastX = coords.x;
+            lastY = coords.y;
+        }
+
+        // Draw
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            
+            const coords = getCoordinates(e);
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(coords.x, coords.y);
+            ctx.stroke();
+            
+            lastX = coords.x;
+            lastY = coords.y;
+        }
+
+        // Stop drawing
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        // Clear canvas
+        clearCanvas.addEventListener('click', () => {
+            ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+        });
+
+        // Submit drawing
+        submitDrawing.addEventListener('click', () => {
+            question4.style.display = 'none';
+            
+            // Convert canvas to image
+            drawingDataURL = drawingCanvas.toDataURL('image/png');
+            
+            // Calculate grade
+            // Base score: 50% for answering yes to both questions
+            let grade = 50;
+            
+            // Add up to 40% based on love amount (scaled from 0 to 10 trillion)
+            const lovePercentage = (userResponses.loveAmount / 10000000000000) * 40;
+            grade += lovePercentage;
+            
+            // Deduct points for trying to click No (up to -20%)
+            // Each click on No reduces score by 2%, max 10 clicks = -20%
+            const noPenalty = Math.min(userResponses.noClickCount * 2, 20);
+            grade -= noPenalty;
+            
+            // Add 10% bonus for completing the drawing
+            grade += 10;
+            
+            // Ensure grade is between 0 and 100
+            grade = Math.max(0, Math.min(100, Math.round(grade)));
+            finalGradeValue = grade;
+            
+            // Determine grade message
+            let gradeMessage = '';
+            if (grade >= 95) {
+                gradeMessage = 'Perfect! You\'re the best! 💖✨';
+            } else if (grade >= 85) {
+                gradeMessage = 'Amazing! So much love! 💕';
+            } else if (grade >= 75) {
+                gradeMessage = 'Great job! 💗';
+            } else if (grade >= 60) {
+                gradeMessage = 'Good effort! 💝';
+            } else {
+                gradeMessage = 'You tried clicking No too much! 😅';
+            }
+            
+            // Update results screen
+            document.getElementById('result3').textContent = userResponses.loveAmount.toLocaleString();
+            document.getElementById('resultDrawing').src = drawingDataURL;
+            document.getElementById('finalGrade').textContent = grade + '%';
+            document.getElementById('gradeMessage').textContent = gradeMessage;
+            
+            // Show results screen
+            resultsScreen.style.display = 'block';
+            
+            // Scroll to top of results
+            document.querySelector('.container').scrollTop = 0;
+            
+            // Create hearts after a delay
+            setTimeout(() => {
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(createHeart, i * 100);
+                }
+            }, 500);
+        });
+
+        // Download button handler
+        downloadBtn.addEventListener('click', async () => {
+            try {
+                // Load dom-to-image library
+                await loadDomToImage();
+                
+                // Hide the download button temporarily
+                downloadBtn.style.display = 'none';
+                
+                // Wait a moment for the UI to update
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Get the results container
+                const resultsContainer = document.getElementById('resultsScreen');
+                
+                // Capture as PNG blob with full quality
+                const blob = await domtoimage.toBlob(resultsContainer, {
+                    quality: 1,
+                    bgcolor: '#ffffff',
+                    style: {
+                        transform: 'scale(1)',
+                        transformOrigin: 'top left'
+                    }
+                });
+                
+                // Show the download button again
+                downloadBtn.style.display = 'inline-block';
+                
+                // Download the image
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = 'valentine-results.png';
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                console.error('Download failed:', err);
+                alert('Failed to download screenshot. Please try again.');
+                downloadBtn.style.display = 'inline-block';
+            }
+        });
+
+        // Variables to track button scaling for question 1
         let noScale = 1;
         let yesScale = 1;
         let chaseCount = 0;
 
+        // Variables to track button scaling for question 2
+        let noScale2 = 1;
+        let yesScale2 = 1;
+        let chaseCount2 = 0;
+
         // Function to get button position
-        function getButtonRect() {
-            return noBtn.getBoundingClientRect();
+        function getButtonRect(button) {
+            return button.getBoundingClientRect();
         }
 
         // Function to shake and grow Yes button
-        function shakeYesButton() {
-            yesBtn.style.animation = 'shake 0.3s ease-in-out';
+        function shakeYesButton(button, isQuestion2 = false) {
+            button.style.animation = 'shake 0.3s ease-in-out';
             setTimeout(() => {
-                yesBtn.style.animation = '';
+                button.style.animation = '';
             }, 300);
         }
 
-        // Function to move the "No" button away from cursor
-        function moveButton(e) {
-            const btnRect = getButtonRect();
+        // Function to move the No button to a random position
+        function moveNoButton(button, isQuestion2 = false) {
+            // Track that they tried to click No
+            userResponses.noClickCount++;
+            
+            if (isQuestion2) {
+                chaseCount2++;
+                noScale2 = Math.max(0.3, 1 - (chaseCount2 * 0.05));
+                yesScale2 = Math.min(2.5, 1 + (chaseCount2 * 0.08));
+                
+                button.style.fontSize = (1.5 * noScale2) + 'em';
+                button.style.padding = (20 * noScale2) + 'px ' + (50 * noScale2) + 'px';
+                
+                yesBtn2.style.fontSize = (1.5 * yesScale2) + 'em';
+                yesBtn2.style.padding = (20 * yesScale2) + 'px ' + (50 * yesScale2) + 'px';
+                
+                shakeYesButton(yesBtn2, true);
+            } else {
+                chaseCount++;
+                noScale = Math.max(0.3, 1 - (chaseCount * 0.05));
+                yesScale = Math.min(2.5, 1 + (chaseCount * 0.08));
+                
+                button.style.fontSize = (1.5 * noScale) + 'em';
+                button.style.padding = (20 * noScale) + 'px ' + (50 * noScale) + 'px';
+                
+                yesBtn.style.fontSize = (1.5 * yesScale) + 'em';
+                yesBtn.style.padding = (20 * yesScale) + 'px ' + (50 * yesScale) + 'px';
+                
+                shakeYesButton(yesBtn, false);
+            }
+            
+            const btnRect = getButtonRect(button);
+            
+            // Calculate random position for No button
+            const padding = 20;
+            const minX = btnRect.width / 2 + padding;
+            const maxX = window.innerWidth - btnRect.width / 2 - padding;
+            const minY = btnRect.height / 2 + padding;
+            const maxY = window.innerHeight - btnRect.height / 2 - padding;
+            
+            const newX = Math.random() * (maxX - minX) + minX;
+            const newY = Math.random() * (maxY - minY) + minY;
+            
+            button.style.position = 'fixed';
+            button.style.left = newX + 'px';
+            button.style.top = newY + 'px';
+            button.style.transform = 'translate(-50%, -50%)';
+            button.style.transition = 'all 0.3s ease-out';
+        }
+
+        // Function to move the "No" button away from cursor (desktop)
+        function moveButton(e, button, isQuestion2 = false) {
+            const btnRect = getButtonRect(button);
             const btnCenterX = btnRect.left + btnRect.width / 2;
             const btnCenterY = btnRect.top + btnRect.height / 2;
             
@@ -177,21 +744,34 @@
             
             // If cursor is within 80px of the button, move it away
             if (distance < 80) {
-                // Increment chase count
-                chaseCount++;
+                // Track that they tried to hover over No
+                userResponses.noClickCount++;
                 
-                // Shrink No button (minimum scale of 0.3)
-                noScale = Math.max(0.3, 1 - (chaseCount * 0.05));
-                noBtn.style.fontSize = (1.5 * noScale) + 'em';
-                noBtn.style.padding = (20 * noScale) + 'px ' + (50 * noScale) + 'px';
-                
-                // Grow Yes button (maximum scale of 2.5)
-                yesScale = Math.min(2.5, 1 + (chaseCount * 0.08));
-                yesBtn.style.fontSize = (1.5 * yesScale) + 'em';
-                yesBtn.style.padding = (20 * yesScale) + 'px ' + (50 * yesScale) + 'px';
-                
-                // Shake Yes button
-                shakeYesButton();
+                if (isQuestion2) {
+                    chaseCount2++;
+                    noScale2 = Math.max(0.3, 1 - (chaseCount2 * 0.05));
+                    yesScale2 = Math.min(2.5, 1 + (chaseCount2 * 0.08));
+                    
+                    button.style.fontSize = (1.5 * noScale2) + 'em';
+                    button.style.padding = (20 * noScale2) + 'px ' + (50 * noScale2) + 'px';
+                    
+                    yesBtn2.style.fontSize = (1.5 * yesScale2) + 'em';
+                    yesBtn2.style.padding = (20 * yesScale2) + 'px ' + (50 * yesScale2) + 'px';
+                    
+                    shakeYesButton(yesBtn2, true);
+                } else {
+                    chaseCount++;
+                    noScale = Math.max(0.3, 1 - (chaseCount * 0.05));
+                    yesScale = Math.min(2.5, 1 + (chaseCount * 0.08));
+                    
+                    button.style.fontSize = (1.5 * noScale) + 'em';
+                    button.style.padding = (20 * noScale) + 'px ' + (50 * noScale) + 'px';
+                    
+                    yesBtn.style.fontSize = (1.5 * yesScale) + 'em';
+                    yesBtn.style.padding = (20 * yesScale) + 'px ' + (50 * yesScale) + 'px';
+                    
+                    shakeYesButton(yesBtn, false);
+                }
                 
                 // Calculate direction to move (opposite to cursor)
                 const angle = Math.atan2(distanceY, distanceX);
@@ -202,7 +782,7 @@
                 let newY = btnCenterY - Math.sin(angle) * moveDistance;
                 
                 // Keep button within viewport bounds (accounting for button size)
-                const padding = 20; // Minimum distance from edge
+                const padding = 20;
                 const minX = btnRect.width / 2 + padding;
                 const maxX = window.innerWidth - btnRect.width / 2 - padding;
                 const minY = btnRect.height / 2 + padding;
@@ -211,10 +791,10 @@
                 newX = Math.max(minX, Math.min(newX, maxX));
                 newY = Math.max(minY, Math.min(newY, maxY));
                 
-                noBtn.style.position = 'fixed';
-                noBtn.style.left = newX + 'px';
-                noBtn.style.top = newY + 'px';
-                noBtn.style.transform = 'translate(-50%, -50%)';
+                button.style.position = 'fixed';
+                button.style.left = newX + 'px';
+                button.style.top = newY + 'px';
+                button.style.transform = 'translate(-50%, -50%)';
             }
         }
 
@@ -230,23 +810,70 @@
             setTimeout(() => heart.remove(), 3000);
         }
 
-        // Add mousemove listener
-        document.addEventListener('mousemove', moveButton);
-
-        // Yes button click handler
-        yesBtn.addEventListener('click', () => {
-            buttonsContainer.style.display = 'none';
-            successMessage.style.display = 'block';
-            
-            // Create multiple hearts
-            for (let i = 0; i < 20; i++) {
-                setTimeout(createHeart, i * 100);
-            }
+        // Add mousemove listener for desktop
+        document.addEventListener('mousemove', (e) => {
+            moveButton(e, noBtn, false);
+            moveButton(e, noBtn2, true);
         });
 
-        // No button click handler (just in case they manage to click it)
-        noBtn.addEventListener('click', () => {
-            alert('The button ran away! 😄 Try the Yes button instead!');
+        // Question 1 - No button listeners
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveNoButton(noBtn, false);
+        });
+
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveNoButton(noBtn, false);
+        });
+
+        // Question 1 - Yes button click handler
+        yesBtn.addEventListener('click', () => {
+            buttonsContainer.style.display = 'none';
+            document.getElementById('questionText').style.display = 'none';
+            question2.style.display = 'block';
+        });
+
+        // Question 2 - No button listeners
+        noBtn2.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveNoButton(noBtn2, true);
+        });
+
+        noBtn2.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveNoButton(noBtn2, true);
+        });
+
+        // Question 2 - Yes button click handler
+        yesBtn2.addEventListener('click', () => {
+            question2.style.display = 'none';
+            question3.style.display = 'block';
+        });
+
+        // Slider update
+        loveSlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            loveAmount.textContent = value.toLocaleString();
+            userResponses.loveAmount = value;
+        });
+
+        // Submit love button
+        submitLove.addEventListener('click', () => {
+            question3.style.display = 'none';
+            question4.style.display = 'block';
+            initCanvas();
+            
+            // Add canvas event listeners
+            drawingCanvas.addEventListener('mousedown', startDrawing);
+            drawingCanvas.addEventListener('mousemove', draw);
+            drawingCanvas.addEventListener('mouseup', stopDrawing);
+            drawingCanvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events for mobile
+            drawingCanvas.addEventListener('touchstart', startDrawing);
+            drawingCanvas.addEventListener('touchmove', draw);
+            drawingCanvas.addEventListener('touchend', stopDrawing);
         });
     </script>
 </body>
