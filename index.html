@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Be My Valentine? 💝</title>
+    <title>Happy Valentine's Day</title>
     <style>
+        /* ========================================
+           RESET & BASE STYLES
+        ======================================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #ff6b9d 0%, #ffc1e3 100%);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            /* Soft romantic gradient background */
+            background: linear-gradient(135deg, #ffd6e8 0%, #ffb3d9 50%, #ffd1dc 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -25,96 +26,438 @@
             position: relative;
         }
 
-        .screenshot-wrapper {
-            background: linear-gradient(135deg, #ff6b9d 0%, #ffc1e3 100%);
-            padding: 40px;
-            border-radius: 0;
-        }
-
+        /* ========================================
+           CONTAINER
+        ======================================== */
         .container {
-            text-align: center;
-            background: white;
-            padding: 60px 80px;
-            border-radius: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 40px 30px;
-                max-height: 95vh;
+        /* ========================================
+           ENVELOPE WRAPPER
+        ======================================== */
+        .envelope-wrapper {
+            position: relative;
+            width: 400px;
+            height: 280px;
+            cursor: pointer;
+            /* Make focusable for keyboard accessibility */
+            outline: none;
+        }
+
+        .envelope-wrapper:focus {
+            outline: 3px solid #ff1744;
+            outline-offset: 8px;
+            border-radius: 4px;
+        }
+
+        /* ========================================
+           ENVELOPE BODY (RECTANGLE)
+        ======================================== */
+        .envelope-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e8dcc4 0%, #d9cdb0 100%);
+            border: 2px solid #c9b896;
+            border-radius: 4px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            z-index: 2;
+            transition: transform 0.8s ease, opacity 0.8s ease, box-shadow 0.3s ease;
+        }
+
+        /* Subtle hover effect on envelope body only when not opened */
+        .envelope-wrapper:not(.opened):hover .envelope-body {
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Add paper texture effect */
+        .envelope-body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.02) 2px,
+                    rgba(0, 0, 0, 0.02) 4px
+                );
+            pointer-events: none;
+        }
+
+        /* When opened, envelope moves back and fades */
+        .envelope-wrapper.opened .envelope-body {
+            transform: scale(0.75) translateY(50px);
+            opacity: 0.4;
+        }
+
+        /* ========================================
+           ENVELOPE FLAP (TRIANGLE)
+        ======================================== */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            transition: transform 0.8s ease, opacity 0.8s ease;
+        }
+
+        .envelope-flap::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 200px solid transparent;
+            border-right: 200px solid transparent;
+            border-top: 140px solid #f0e6d2;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            transform-origin: top center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* When opened, flap rotates up */
+        .envelope-wrapper.opened .envelope-flap::before {
+            transform: translateX(-50%) rotateX(-180deg);
+        }
+
+        /* When opened, entire flap element moves back and fades with envelope body */
+        .envelope-wrapper.opened .envelope-flap {
+            transform: scale(0.75) translateY(50px);
+            opacity: 0.4;
+        }
+
+        /* ========================================
+           NOTE / CARD
+        ======================================== */
+        .note {
+            position: fixed;
+            width: 350px;
+            background: linear-gradient(145deg, #ffffff 0%, #fff8f8 100%);
+            border-radius: 12px;
+            padding: 40px 35px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            /* Start hidden inside envelope */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 100vh);
+            opacity: 0;
+            /* Prevent interaction until opened */
+            pointer-events: none;
+            /* Animation properties */
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s,
+                        opacity 0.6s ease 0.4s,
+                        z-index 0s 0.4s;
+        }
+
+        /* Add subtle paper texture to note */
+        .note::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.01) 2px,
+                    rgba(0, 0, 0, 0.01) 4px
+                );
+            pointer-events: none;
+            border-radius: 12px;
+        }
+
+        /* When opened, note centers on screen */
+        .envelope-wrapper.opened .note {
+            transform: translate(-50%, -50%);
+            opacity: 1;
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        /* ========================================
+           SECOND NOTE (KISS GAME)
+        ======================================== */
+        .note-second {
+            position: fixed;
+            width: 350px;
+            background: linear-gradient(145deg, #ffffff 0%, #fff8f8 100%);
+            border-radius: 12px;
+            padding: 40px 35px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            top: 50%;
+            left: 150%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: left 0.6s ease, opacity 0.6s ease;
+        }
+
+        .note-second.visible {
+            left: 50%;
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 11;
+        }
+
+        .note-second::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.01) 2px,
+                    rgba(0, 0, 0, 0.01) 4px
+                );
+            pointer-events: none;
+            border-radius: 12px;
+        }
+
+        .kiss-title {
+            color: #ff1744;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .stick-figure-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">💋</text></svg>') 16 16, auto;
+        }
+
+        .stick-figure {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 200px;
+            user-select: none;
+            pointer-events: none;
+            opacity: 1;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .kiss-mark {
+            position: absolute;
+            font-size: 32px;
+            pointer-events: none;
+            animation: kissAppear 0.3s ease;
+        }
+
+        @keyframes kissAppear {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(10deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
             }
         }
 
-        h1 {
-            font-size: 3em;
+        /* Swipe hint */
+        .swipe-hint {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
             color: #ff1744;
-            margin-bottom: 50px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 1.4em;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 12;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(255, 23, 68, 0.3);
         }
 
-        .buttons {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            position: relative;
-            height: 80px;
+        .swipe-hint.visible {
+            opacity: 1;
+            animation: swipeAnimation 1.5s ease-in-out infinite;
         }
 
-        button {
-            padding: 20px 50px;
-            font-size: 1.5em;
+        @keyframes swipeAnimation {
+            0%, 100% {
+                transform: translateX(-50%) translateX(0px);
+            }
+            50% {
+                transform: translateX(-50%) translateX(-30px);
+            }
+        }
+
+        /* Hide first note when second is visible */
+        .note.hidden {
+            left: -50%;
+            opacity: 0;
+        }
+
+        /* ========================================
+           SCREENSHOT BUTTON
+        ======================================== */
+        .screenshot-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            background: linear-gradient(135deg, #ff1744 0%, #d81b60 100%);
+            color: white;
             border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 23, 68, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.2s ease;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            z-index: 20;
+            opacity: 0;
+        }
+
+        .screenshot-btn.visible {
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+        }
+
+        .screenshot-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 23, 68, 0.6);
+        }
+
+        .screenshot-btn:active {
+            transform: translateX(-50%) scale(0.98);
+        }
+
+        /* ========================================
+           NOTE TEXT STYLING
+        ======================================== */
+        .note-title {
+            color: #ff1744;
+            font-size: 1.4em;
             font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s, font-size 0.3s, padding 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            touch-action: manipulation;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(255, 23, 68, 0.1);
+            letter-spacing: 0.5px;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        .note-subtitle {
+            color: #d81b60;
+            font-size: 1.1em;
+            margin-bottom: 18px;
+            text-align: center;
         }
 
-        #yesBtn {
-            background: linear-gradient(135deg, #ff1744 0%, #ff6b9d 100%);
-            color: white;
+        .note-poem {
+            color: #333;
+            font-size: 1em;
+            line-height: 1.75;
+            text-align: center;
         }
 
-        #noBtn {
-            background: linear-gradient(135deg, #9e9e9e 0%, #bdbdbd 100%);
-            color: white;
+        /* ========================================
+           CLICK HINT
+        ======================================== */
+        .click-hint {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #d81b60;
+            font-size: 1.1em;
+            animation: pulse 2s ease-in-out infinite;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.4s ease;
         }
 
-        .hearts {
+        .envelope-wrapper.opened .click-hint {
+            opacity: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.6;
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        /* ========================================
+           FLOATING HEARTS DECORATION
+        ======================================== */
+        .hearts-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1000;
+            z-index: 0;
+            overflow: hidden;
         }
 
         .heart {
             position: absolute;
-            font-size: 30px;
-            animation: float 3s ease-in-out;
+            font-size: 20px;
             opacity: 0;
+            animation: floatHeart 8s ease-in-out infinite;
+            color: #ff69b4;
         }
 
-        @keyframes float {
+        @keyframes floatHeart {
             0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
             }
             100% {
                 transform: translateY(-100vh) rotate(360deg);
@@ -122,758 +465,459 @@
             }
         }
 
-        .success-message {
-            display: none;
-            font-size: 2em;
-            color: #ff1744;
-            margin-top: 30px;
-            animation: fadeIn 0.5s;
+        /* Stagger heart animations */
+        .heart:nth-child(1) { left: 10%; animation-delay: 0s; font-size: 25px; }
+        .heart:nth-child(2) { left: 20%; animation-delay: 2s; font-size: 18px; }
+        .heart:nth-child(3) { left: 30%; animation-delay: 4s; font-size: 22px; }
+        .heart:nth-child(4) { left: 40%; animation-delay: 1s; font-size: 20px; }
+        .heart:nth-child(5) { left: 50%; animation-delay: 3s; font-size: 24px; }
+        .heart:nth-child(6) { left: 60%; animation-delay: 5s; font-size: 19px; }
+        .heart:nth-child(7) { left: 70%; animation-delay: 2.5s; font-size: 21px; }
+        .heart:nth-child(8) { left: 80%; animation-delay: 4.5s; font-size: 23px; }
+        .heart:nth-child(9) { left: 90%; animation-delay: 1.5s; font-size: 20px; }
+
+        /* ========================================
+           RESPONSIVE DESIGN
+        ======================================== */
+        @media (max-width: 600px) {
+            .envelope-wrapper {
+                width: 320px;
+                height: 220px;
+            }
+
+            .envelope-flap::before {
+                border-left: 160px solid transparent;
+                border-right: 160px solid transparent;
+                border-top: 110px solid #f0e6d2;
+            }
+
+            .note {
+                width: 300px;
+                padding: 30px 25px;
+            }
+
+            .note-second {
+                width: 300px;
+                padding: 30px 25px;
+            }
+
+            .stick-figure {
+                font-size: 150px;
+            }
+
+            .stick-figure-container {
+                height: 250px;
+            }
+
+            .kiss-mark {
+                font-size: 28px;
+            }
+
+            .kiss-title {
+                font-size: 1.2em;
+                margin-bottom: 20px;
+            }
+
+            .swipe-hint {
+                font-size: 1.2em;
+                padding: 12px 25px;
+            }
+
+            .note-title {
+                font-size: 1.2em;
+            }
+
+            .note-subtitle {
+                font-size: 1em;
+            }
+
+            .note-poem {
+                font-size: 0.9em;
+                line-height: 1.65;
+            }
+
+            .click-hint {
+                font-size: 1em;
+                bottom: -50px;
+            }
         }
 
-        .question-container {
-            display: none;
-            animation: fadeIn 0.5s;
+        @media (max-width: 400px) {
+            .envelope-wrapper {
+                width: 280px;
+                height: 200px;
+            }
+
+            .envelope-flap::before {
+                border-left: 140px solid transparent;
+                border-right: 140px solid transparent;
+                border-top: 100px solid #f0e6d2;
+            }
+
+            .note {
+                width: 260px;
+                padding: 25px 20px;
+            }
+
+            .note-title {
+                font-size: 1.1em;
+            }
+
+            .note-subtitle {
+                font-size: 0.9em;
+            }
+
+            .note-poem {
+                font-size: 0.85em;
+            }
         }
 
-        .slider-container {
-            margin-top: 30px;
-            width: 100%;
+        /* ========================================
+           ACCESSIBILITY: REDUCED MOTION
+        ======================================== */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .envelope-wrapper:hover {
+                transform: none;
+            }
+
+            .heart {
+                display: none;
+            }
+
+            .click-hint {
+                animation: none;
+                opacity: 0.8;
+            }
         }
 
-        .slider-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            max-width: 400px;
-            height: 10px;
-            border-radius: 5px;
-            background: linear-gradient(to right, #ffc1e3 0%, #ff1744 100%);
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #ff1744;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(255, 23, 68, 0.5);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #ff1744;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(255, 23, 68, 0.5);
-            border: none;
-        }
-
-        .love-amount {
-            font-size: 2.5em;
-            color: #ff1744;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .submit-love {
-            padding: 15px 40px;
-            font-size: 1.3em;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            background: linear-gradient(135deg, #ff1744 0%, #ff6b9d 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            margin-top: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .submit-love:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .drawing-container {
-            margin-top: 30px;
-        }
-
-        #drawingCanvas {
-            border: 3px solid #ff1744;
-            border-radius: 15px;
-            cursor: crosshair;
-            touch-action: none;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            max-width: 100%;
-            height: auto;
-        }
-
-        .canvas-controls {
-            margin-top: 20px;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .canvas-btn {
-            padding: 10px 25px;
-            font-size: 1em;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            background: linear-gradient(135deg, #ff1744 0%, #ff6b9d 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .canvas-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .canvas-btn.secondary {
-            background: linear-gradient(135deg, #9e9e9e 0%, #bdbdbd 100%);
-        }
-
-        .results-container {
-            display: none;
-            animation: fadeIn 0.5s;
-            text-align: left;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background: white;
-            border-radius: 20px;
-        }
-
-        .results-container h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .result-item {
-            background: #fff0f5;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 15px;
-            border-left: 5px solid #ff1744;
-        }
-
-        .result-question {
-            font-weight: bold;
-            color: #ff1744;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-        }
-
-        .result-answer {
-            color: #333;
-            font-size: 1em;
-        }
-
-        .result-canvas {
-            border: 3px solid #ff1744;
-            border-radius: 10px;
-            max-width: 100%;
-            height: auto;
-            margin-top: 10px;
-        }
-
-        .grade-container {
-            text-align: center;
-            margin-top: 40px;
-            padding: 30px;
-            background: linear-gradient(135deg, #ff1744 0%, #ff6b9d 100%);
-            border-radius: 20px;
-            color: white;
-        }
-
-        .grade-title {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .grade-score {
-            font-size: 4em;
-            font-weight: bold;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .grade-message {
-            font-size: 1.3em;
-            margin-top: 15px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 15px 35px;
-            font-size: 1.2em;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-            color: white;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .download-btn {
-            background: linear-gradient(135deg, #ff1744 0%, #ff6b9d 100%);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateY(-2px) rotate(0deg); }
-            25% { transform: translateY(-2px) rotate(-5deg); }
-            75% { transform: translateY(-2px) rotate(5deg); }
+        /* ========================================
+           SCREEN READER ONLY TEXT
+        ======================================== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
         }
     </style>
 </head>
 <body>
-    <div class="hearts" id="hearts"></div>
-    
-    <div class="screenshot-wrapper" id="screenshotWrapper">
-        <div class="container">
-        <h1 id="questionText">Will you be my Valentine???</h1>
-        <div class="buttons" id="buttonsContainer">
-            <button id="yesBtn">Yes! 💕</button>
-            <button id="noBtn">No</button>
-        </div>
-        
-        <div class="question-container" id="question2">
-            <h1>Do you love me???</h1>
-            <div class="buttons" id="buttonsContainer2">
-                <button id="yesBtn2">Yes! 💕</button>
-                <button id="noBtn2">No</button>
-            </div>
-        </div>
-        
-        <div class="question-container" id="question3">
-            <h1>How much do you love me???</h1>
-            <div class="slider-container">
-                <div class="slider-wrapper">
-                    <div class="love-amount" id="loveAmount">5000000000000</div>
-                    <input type="range" id="loveSlider" min="0" max="10000000000000" value="5000000000000" step="100000000">
-                    <button class="submit-love" id="submitLove">Submit 💖</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="question-container" id="question4">
-            <h1>If you love me then draw me:</h1>
-            <div class="drawing-container">
-                <canvas id="drawingCanvas" width="600" height="400"></canvas>
-                <div class="canvas-controls">
-                    <button class="canvas-btn secondary" id="clearCanvas">Clear</button>
-                    <button class="canvas-btn" id="submitDrawing">Done! 💕</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="results-container" id="resultsScreen">
-            <h1>Your Results 💕</h1>
-            
-            <div class="result-item">
-                <div class="result-question">Will you be my Valentine???</div>
-                <div class="result-answer" id="result1">Yes! 💕</div>
-            </div>
-            
-            <div class="result-item">
-                <div class="result-question">Do you love me???</div>
-                <div class="result-answer" id="result2">Yes! 💕</div>
-            </div>
-            
-            <div class="result-item">
-                <div class="result-question">How much do you love me???</div>
-                <div class="result-answer" id="result3">0</div>
-            </div>
-            
-            <div class="result-item">
-                <div class="result-question">If you love me then draw me:</div>
-                <img id="resultDrawing" class="result-canvas" src="" alt="Your drawing">
-            </div>
-            
-            <div class="grade-container">
-                <div class="grade-title">YOUR GRADE:</div>
-                <div class="grade-score" id="finalGrade">100%</div>
-                <div class="grade-message" id="gradeMessage">Perfect score! 💖</div>
-            </div>
-            
-            <div class="action-buttons">
-                <button class="action-btn download-btn" id="downloadBtn">Download Results 📥</button>
-            </div>
-        </div>
-        
-        <div class="success-message" id="successMessage">
-            ily :)
-        </div>
+    <!-- Floating hearts decoration (subtle background effect) -->
+    <div class="hearts-container" aria-hidden="true">
+        <div class="heart">❤</div>
+        <div class="heart">💕</div>
+        <div class="heart">💖</div>
+        <div class="heart">❤</div>
+        <div class="heart">💕</div>
+        <div class="heart">💖</div>
+        <div class="heart">❤</div>
+        <div class="heart">💕</div>
+        <div class="heart">💖</div>
     </div>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- Envelope (interactive element) -->
+        <div 
+            class="envelope-wrapper" 
+            role="button" 
+            tabindex="0"
+            aria-label="Click to open Valentine's Day envelope"
+            aria-pressed="false"
+        >
+            <!-- Screen reader announcement -->
+            <span class="sr-only">Press Enter or Space to open the envelope</span>
+
+            <!-- Envelope body (main rectangle) -->
+            <div class="envelope-body"></div>
+
+            <!-- Envelope flap (triangle that opens) -->
+            <div class="envelope-flap"></div>
+
+            <!-- Note that slides out -->
+            <div class="note" role="article" aria-labelledby="note-title">
+                <h1 class="note-title" id="note-title">HAPPY VALENTINES DAY HABIBTI!</h1>
+                <p class="note-subtitle">A little poem for you:</p>
+                <p class="note-poem">
+                    My love. You are the answer to my duaas. Those duaas that i made for a righteous, beautiful spouse who would be the light of my eyes. Who would bring me closer to the most high. Who would bear for me children that would serve this deen. Who would be my inspiration. Who would be my rock. My best friend. I love you and can't wait for the rest of my life with you
+                </p>
+            </div>
+
+            <!-- Click hint text -->
+            <div class="click-hint" aria-hidden="true">Click to open ❤</div>
+        </div>
+
+        <!-- Second note (kiss game) -->
+        <div class="note-second" role="article">
+            <h2 class="kiss-title">Leave a kiss 💋</h2>
+            <div class="stick-figure-container" id="kissCanvas">
+                <div class="stick-figure">🧍</div>
+            </div>
+            <button class="screenshot-btn" id="screenshotBtn">📸 Take a Screenshot</button>
+        </div>
+
+        <!-- Swipe hint -->
+        <div class="swipe-hint" id="swipeHint">← Swipe to see more</div>
     </div>
 
     <script>
-        const noBtn = document.getElementById('noBtn');
-        const yesBtn = document.getElementById('yesBtn');
-        const noBtn2 = document.getElementById('noBtn2');
-        const yesBtn2 = document.getElementById('yesBtn2');
-        const successMessage = document.getElementById('successMessage');
-        const heartsContainer = document.getElementById('hearts');
-        const buttonsContainer = document.getElementById('buttonsContainer');
-        const buttonsContainer2 = document.getElementById('buttonsContainer2');
-        const question2 = document.getElementById('question2');
-        const question3 = document.getElementById('question3');
-        const loveSlider = document.getElementById('loveSlider');
-        const loveAmount = document.getElementById('loveAmount');
-        const submitLove = document.getElementById('submitLove');
-        const question4 = document.getElementById('question4');
-        const drawingCanvas = document.getElementById('drawingCanvas');
-        const clearCanvas = document.getElementById('clearCanvas');
-        const submitDrawing = document.getElementById('submitDrawing');
-        const resultsScreen = document.getElementById('resultsScreen');
-        const downloadBtn = document.getElementById('downloadBtn');
+        // ========================================
+        // INTERACTIVE FUNCTIONALITY
+        // ========================================
 
-        // Track user responses
-        let userResponses = {
-            question1: 'Yes! 💕',
-            question2: 'Yes! 💕',
-            loveAmount: 5000000000000,
-            noClickCount: 0  // Track how many times they tried to click No
-        };
+        // Get the envelope element
+        const envelope = document.querySelector('.envelope-wrapper');
+        const firstNote = document.querySelector('.note');
+        const secondNote = document.querySelector('.note-second');
+        const swipeHint = document.getElementById('swipeHint');
+        const kissCanvas = document.getElementById('kissCanvas');
+        const screenshotBtn = document.getElementById('screenshotBtn');
+        
+        // Track opened state
+        let isOpened = false;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let kissCount = 0;
 
-        let finalGradeValue = 0;
-        let drawingDataURL = '';
-
-        // Load dom-to-image library dynamically
-        function loadDomToImage() {
-            return new Promise((resolve, reject) => {
-                if (window.domtoimage) {
-                    resolve();
-                    return;
-                }
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js';
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        }
-
-        // Canvas setup
-        let ctx;
-        let isDrawing = false;
-        let lastX = 0;
-        let lastY = 0;
-
-        // Initialize canvas when question 4 is shown
-        function initCanvas() {
-            ctx = drawingCanvas.getContext('2d');
-            ctx.strokeStyle = '#ff1744';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-        }
-
-        // Get coordinates from mouse or touch event
-        function getCoordinates(e) {
-            const rect = drawingCanvas.getBoundingClientRect();
-            if (e.touches) {
-                return {
-                    x: e.touches[0].clientX - rect.left,
-                    y: e.touches[0].clientY - rect.top
-                };
-            }
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-        }
-
-        // Start drawing
-        function startDrawing(e) {
-            isDrawing = true;
-            const coords = getCoordinates(e);
-            lastX = coords.x;
-            lastY = coords.y;
-        }
-
-        // Draw
-        function draw(e) {
-            if (!isDrawing) return;
-            e.preventDefault();
+        // Function to toggle envelope open/closed
+        function toggleEnvelope() {
+            isOpened = !isOpened;
             
-            const coords = getCoordinates(e);
-            
-            ctx.beginPath();
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(coords.x, coords.y);
-            ctx.stroke();
-            
-            lastX = coords.x;
-            lastY = coords.y;
-        }
-
-        // Stop drawing
-        function stopDrawing() {
-            isDrawing = false;
-        }
-
-        // Clear canvas
-        clearCanvas.addEventListener('click', () => {
-            ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-        });
-
-        // Submit drawing
-        submitDrawing.addEventListener('click', () => {
-            question4.style.display = 'none';
-            
-            // Convert canvas to image
-            drawingDataURL = drawingCanvas.toDataURL('image/png');
-            
-            // Calculate grade
-            // Base score: 50% for answering yes to both questions
-            let grade = 50;
-            
-            // Add up to 40% based on love amount (scaled from 0 to 10 trillion)
-            const lovePercentage = (userResponses.loveAmount / 10000000000000) * 40;
-            grade += lovePercentage;
-            
-            // Deduct points for trying to click No (up to -20%)
-            // Each click on No reduces score by 2%, max 10 clicks = -20%
-            const noPenalty = Math.min(userResponses.noClickCount * 2, 20);
-            grade -= noPenalty;
-            
-            // Add 10% bonus for completing the drawing
-            grade += 10;
-            
-            // Ensure grade is between 0 and 100
-            grade = Math.max(0, Math.min(100, Math.round(grade)));
-            finalGradeValue = grade;
-            
-            // Determine grade message
-            let gradeMessage = '';
-            if (grade >= 95) {
-                gradeMessage = 'Perfect! You\'re the best! 💖✨';
-            } else if (grade >= 85) {
-                gradeMessage = 'Amazing! So much love! 💕';
-            } else if (grade >= 75) {
-                gradeMessage = 'Great job! 💗';
-            } else if (grade >= 60) {
-                gradeMessage = 'Good effort! 💝';
+            if (isOpened) {
+                envelope.classList.add('opened');
+                envelope.setAttribute('aria-pressed', 'true');
+                envelope.setAttribute('aria-label', 'Valentine\'s Day envelope opened. Click to close.');
+                
+                // Show swipe hint after 2 seconds
+                setTimeout(() => {
+                    swipeHint.classList.add('visible');
+                }, 2000);
             } else {
-                gradeMessage = 'You tried clicking No too much! 😅';
+                envelope.classList.remove('opened');
+                envelope.setAttribute('aria-pressed', 'false');
+                envelope.setAttribute('aria-label', 'Click to open Valentine\'s Day envelope');
+                swipeHint.classList.remove('visible');
             }
-            
-            // Update results screen
-            document.getElementById('result3').textContent = userResponses.loveAmount.toLocaleString();
-            document.getElementById('resultDrawing').src = drawingDataURL;
-            document.getElementById('finalGrade').textContent = grade + '%';
-            document.getElementById('gradeMessage').textContent = gradeMessage;
-            
-            // Show results screen
-            resultsScreen.style.display = 'block';
-            
-            // Scroll to top of results
-            document.querySelector('.container').scrollTop = 0;
-            
-            // Create hearts after a delay
-            setTimeout(() => {
-                for (let i = 0; i < 20; i++) {
-                    setTimeout(createHeart, i * 100);
-                }
-            }, 500);
+        }
+
+        // Swipe detection
+        firstNote.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
         });
 
-        // Download button handler
-        downloadBtn.addEventListener('click', async () => {
-            try {
-                // Load dom-to-image library
-                await loadDomToImage();
+        firstNote.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        // Mouse swipe detection (drag)
+        let mouseDown = false;
+        let mouseStartX = 0;
+
+        firstNote.addEventListener('mousedown', function(e) {
+            mouseDown = true;
+            mouseStartX = e.clientX;
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (mouseDown && isOpened) {
+                const diff = e.clientX - mouseStartX;
+                if (diff < -50) {
+                    firstNote.style.transform = `translate(${-50 + (diff / 10)}%, -50%)`;
+                }
+            }
+        });
+
+        document.addEventListener('mouseup', function(e) {
+            if (mouseDown && isOpened) {
+                const diff = e.clientX - mouseStartX;
+                if (diff < -100) {
+                    showSecondNote();
+                } else {
+                    firstNote.style.transform = 'translate(-50%, -50%)';
+                }
+                mouseDown = false;
+            }
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                // Swiped left
+                showSecondNote();
+            }
+        }
+
+        function showSecondNote() {
+            firstNote.classList.add('hidden');
+            secondNote.classList.add('visible');
+            swipeHint.classList.remove('visible');
+            swipeHint.style.display = 'none';
+        }
+
+        // Kiss interaction
+        kissCanvas.addEventListener('click', function(e) {
+            const rect = kissCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            addKiss(x, y);
+        });
+
+        kissCanvas.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            const rect = kissCanvas.getBoundingClientRect();
+            const touch = e.changedTouches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            addKiss(x, y);
+        });
+
+        function addKiss(x, y) {
+            const kiss = document.createElement('div');
+            kiss.className = 'kiss-mark';
+            kiss.textContent = '💋';
+            kiss.style.left = (x - 16) + 'px';
+            kiss.style.top = (y - 16) + 'px';
+            kissCanvas.appendChild(kiss);
+            
+            // Show screenshot button after first kiss
+            kissCount++;
+            if (kissCount === 1) {
+                screenshotBtn.classList.add('visible');
+            }
+        }
+
+        // Mouse click handler
+        envelope.addEventListener('click', toggleEnvelope);
+
+        // Keyboard accessibility (Enter or Space key)
+        envelope.addEventListener('keydown', function(event) {
+            // Check if Enter (13) or Space (32) was pressed
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault(); // Prevent page scroll on Space
+                toggleEnvelope();
+            }
+        });
+
+        // Optional: Add extra hearts when envelope opens (decorative)
+        envelope.addEventListener('click', function() {
+            if (envelope.classList.contains('opened')) {
+                createBurstHearts();
+            }
+        });
+
+        // Function to create burst of hearts when opened
+        function createBurstHearts() {
+            const container = document.querySelector('.hearts-container');
+            
+            for (let i = 0; i < 12; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.textContent = ['❤', '💕', '💖'][Math.floor(Math.random() * 3)];
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.fontSize = (Math.random() * 15 + 20) + 'px';
+                    heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                    container.appendChild(heart);
+                    
+                    // Remove heart after animation
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 8000);
+                }, i * 100);
+            }
+        }
+
+        // ========================================
+        // ACCESSIBILITY ANNOUNCEMENT
+        // ========================================
+        
+        // Announce to screen readers when envelope opens
+        envelope.addEventListener('click', function() {
+            if (envelope.classList.contains('opened')) {
+                // Create live region announcement
+                const announcement = document.createElement('div');
+                announcement.setAttribute('role', 'status');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.className = 'sr-only';
+                announcement.textContent = 'Envelope opened. Valentine\'s Day message now visible.';
+                document.body.appendChild(announcement);
                 
-                // Hide the download button temporarily
-                downloadBtn.style.display = 'none';
-                
-                // Wait a moment for the UI to update
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                // Get the results container
-                const resultsContainer = document.getElementById('resultsScreen');
-                
-                // Capture as PNG blob with full quality
-                const blob = await domtoimage.toBlob(resultsContainer, {
-                    quality: 1,
-                    bgcolor: '#ffffff',
-                    style: {
-                        transform: 'scale(1)',
-                        transformOrigin: 'top left'
-                    }
-                });
-                
-                // Show the download button again
-                downloadBtn.style.display = 'inline-block';
-                
-                // Download the image
+                // Remove after announcement
+                setTimeout(() => {
+                    announcement.remove();
+                }, 3000);
+            }
+        });
+
+        // ========================================
+        // SCREENSHOT FUNCTIONALITY
+        // ========================================
+        screenshotBtn.addEventListener('click', function() {
+            // Change button text
+            screenshotBtn.textContent = '📸 Capturing...';
+            screenshotBtn.disabled = true;
+            
+            // Create a canvas to draw the content
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size to match the kiss canvas
+            const rect = kissCanvas.getBoundingClientRect();
+            canvas.width = rect.width * 2; // 2x for better quality
+            canvas.height = rect.height * 2;
+            
+            // Scale context for better quality
+            ctx.scale(2, 2);
+            
+            // Fill white background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, rect.width, rect.height);
+            
+            // Draw stick figure emoji in center
+            ctx.font = '200px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🧍', rect.width / 2, rect.height / 2);
+            
+            // Draw all kiss marks
+            const kissMarks = kissCanvas.querySelectorAll('.kiss-mark');
+            ctx.font = '32px Arial';
+            kissMarks.forEach(kiss => {
+                const x = parseFloat(kiss.style.left) + 16;
+                const y = parseFloat(kiss.style.top) + 16;
+                ctx.fillText('💋', x, y);
+            });
+            
+            // Convert to JPEG and download
+            canvas.toBlob(function(blob) {
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                link.download = 'valentine-results.png';
+                link.download = 'valentine-kisses.jpg';
                 link.href = url;
                 link.click();
+                
+                // Clean up
                 URL.revokeObjectURL(url);
-            } catch (err) {
-                console.error('Download failed:', err);
-                alert('Failed to download screenshot. Please try again.');
-                downloadBtn.style.display = 'inline-block';
-            }
-        });
-
-        // Variables to track button scaling for question 1
-        let noScale = 1;
-        let yesScale = 1;
-        let chaseCount = 0;
-
-        // Variables to track button scaling for question 2
-        let noScale2 = 1;
-        let yesScale2 = 1;
-        let chaseCount2 = 0;
-
-        // Function to get button position
-        function getButtonRect(button) {
-            return button.getBoundingClientRect();
-        }
-
-        // Function to shake and grow Yes button
-        function shakeYesButton(button, isQuestion2 = false) {
-            button.style.animation = 'shake 0.3s ease-in-out';
-            setTimeout(() => {
-                button.style.animation = '';
-            }, 300);
-        }
-
-        // Function to move the No button to a random position
-        function moveNoButton(button, isQuestion2 = false) {
-            // Track that they tried to click No
-            userResponses.noClickCount++;
-            
-            if (isQuestion2) {
-                chaseCount2++;
-                noScale2 = Math.max(0.3, 1 - (chaseCount2 * 0.05));
-                yesScale2 = Math.min(2.5, 1 + (chaseCount2 * 0.08));
                 
-                button.style.fontSize = (1.5 * noScale2) + 'em';
-                button.style.padding = (20 * noScale2) + 'px ' + (50 * noScale2) + 'px';
-                
-                yesBtn2.style.fontSize = (1.5 * yesScale2) + 'em';
-                yesBtn2.style.padding = (20 * yesScale2) + 'px ' + (50 * yesScale2) + 'px';
-                
-                shakeYesButton(yesBtn2, true);
-            } else {
-                chaseCount++;
-                noScale = Math.max(0.3, 1 - (chaseCount * 0.05));
-                yesScale = Math.min(2.5, 1 + (chaseCount * 0.08));
-                
-                button.style.fontSize = (1.5 * noScale) + 'em';
-                button.style.padding = (20 * noScale) + 'px ' + (50 * noScale) + 'px';
-                
-                yesBtn.style.fontSize = (1.5 * yesScale) + 'em';
-                yesBtn.style.padding = (20 * yesScale) + 'px ' + (50 * yesScale) + 'px';
-                
-                shakeYesButton(yesBtn, false);
-            }
-            
-            const btnRect = getButtonRect(button);
-            
-            // Calculate random position for No button
-            const padding = 20;
-            const minX = btnRect.width / 2 + padding;
-            const maxX = window.innerWidth - btnRect.width / 2 - padding;
-            const minY = btnRect.height / 2 + padding;
-            const maxY = window.innerHeight - btnRect.height / 2 - padding;
-            
-            const newX = Math.random() * (maxX - minX) + minX;
-            const newY = Math.random() * (maxY - minY) + minY;
-            
-            button.style.position = 'fixed';
-            button.style.left = newX + 'px';
-            button.style.top = newY + 'px';
-            button.style.transform = 'translate(-50%, -50%)';
-            button.style.transition = 'all 0.3s ease-out';
-        }
-
-        // Function to move the "No" button away from cursor (desktop)
-        function moveButton(e, button, isQuestion2 = false) {
-            const btnRect = getButtonRect(button);
-            const btnCenterX = btnRect.left + btnRect.width / 2;
-            const btnCenterY = btnRect.top + btnRect.height / 2;
-            
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-            
-            // Calculate distance between cursor and button
-            const distanceX = mouseX - btnCenterX;
-            const distanceY = mouseY - btnCenterY;
-            const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-            
-            // If cursor is within 80px of the button, move it away
-            if (distance < 80) {
-                // Track that they tried to hover over No
-                userResponses.noClickCount++;
-                
-                if (isQuestion2) {
-                    chaseCount2++;
-                    noScale2 = Math.max(0.3, 1 - (chaseCount2 * 0.05));
-                    yesScale2 = Math.min(2.5, 1 + (chaseCount2 * 0.08));
-                    
-                    button.style.fontSize = (1.5 * noScale2) + 'em';
-                    button.style.padding = (20 * noScale2) + 'px ' + (50 * noScale2) + 'px';
-                    
-                    yesBtn2.style.fontSize = (1.5 * yesScale2) + 'em';
-                    yesBtn2.style.padding = (20 * yesScale2) + 'px ' + (50 * yesScale2) + 'px';
-                    
-                    shakeYesButton(yesBtn2, true);
-                } else {
-                    chaseCount++;
-                    noScale = Math.max(0.3, 1 - (chaseCount * 0.05));
-                    yesScale = Math.min(2.5, 1 + (chaseCount * 0.08));
-                    
-                    button.style.fontSize = (1.5 * noScale) + 'em';
-                    button.style.padding = (20 * noScale) + 'px ' + (50 * noScale) + 'px';
-                    
-                    yesBtn.style.fontSize = (1.5 * yesScale) + 'em';
-                    yesBtn.style.padding = (20 * yesScale) + 'px ' + (50 * yesScale) + 'px';
-                    
-                    shakeYesButton(yesBtn, false);
-                }
-                
-                // Calculate direction to move (opposite to cursor)
-                const angle = Math.atan2(distanceY, distanceX);
-                const moveDistance = 100;
-                
-                // Calculate new position
-                let newX = btnCenterX - Math.cos(angle) * moveDistance;
-                let newY = btnCenterY - Math.sin(angle) * moveDistance;
-                
-                // Keep button within viewport bounds (accounting for button size)
-                const padding = 20;
-                const minX = btnRect.width / 2 + padding;
-                const maxX = window.innerWidth - btnRect.width / 2 - padding;
-                const minY = btnRect.height / 2 + padding;
-                const maxY = window.innerHeight - btnRect.height / 2 - padding;
-                
-                newX = Math.max(minX, Math.min(newX, maxX));
-                newY = Math.max(minY, Math.min(newY, maxY));
-                
-                button.style.position = 'fixed';
-                button.style.left = newX + 'px';
-                button.style.top = newY + 'px';
-                button.style.transform = 'translate(-50%, -50%)';
-            }
-        }
-
-        // Function to create floating hearts
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.textContent = '💕';
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
-            heartsContainer.appendChild(heart);
-            
-            setTimeout(() => heart.remove(), 3000);
-        }
-
-        // Add mousemove listener for desktop
-        document.addEventListener('mousemove', (e) => {
-            moveButton(e, noBtn, false);
-            moveButton(e, noBtn2, true);
-        });
-
-        // Question 1 - No button listeners
-        noBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            moveNoButton(noBtn, false);
-        });
-
-        noBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            moveNoButton(noBtn, false);
-        });
-
-        // Question 1 - Yes button click handler
-        yesBtn.addEventListener('click', () => {
-            buttonsContainer.style.display = 'none';
-            document.getElementById('questionText').style.display = 'none';
-            question2.style.display = 'block';
-        });
-
-        // Question 2 - No button listeners
-        noBtn2.addEventListener('click', (e) => {
-            e.preventDefault();
-            moveNoButton(noBtn2, true);
-        });
-
-        noBtn2.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            moveNoButton(noBtn2, true);
-        });
-
-        // Question 2 - Yes button click handler
-        yesBtn2.addEventListener('click', () => {
-            question2.style.display = 'none';
-            question3.style.display = 'block';
-        });
-
-        // Slider update
-        loveSlider.addEventListener('input', (e) => {
-            const value = parseInt(e.target.value);
-            loveAmount.textContent = value.toLocaleString();
-            userResponses.loveAmount = value;
-        });
-
-        // Submit love button
-        submitLove.addEventListener('click', () => {
-            question3.style.display = 'none';
-            question4.style.display = 'block';
-            initCanvas();
-            
-            // Add canvas event listeners
-            drawingCanvas.addEventListener('mousedown', startDrawing);
-            drawingCanvas.addEventListener('mousemove', draw);
-            drawingCanvas.addEventListener('mouseup', stopDrawing);
-            drawingCanvas.addEventListener('mouseout', stopDrawing);
-            
-            // Touch events for mobile
-            drawingCanvas.addEventListener('touchstart', startDrawing);
-            drawingCanvas.addEventListener('touchmove', draw);
-            drawingCanvas.addEventListener('touchend', stopDrawing);
+                // Reset button
+                screenshotBtn.textContent = '📸 Take a Screenshot';
+                screenshotBtn.disabled = false;
+            }, 'image/jpeg', 0.95);
         });
     </script>
 </body>
